@@ -91,9 +91,9 @@ module.exports.decode_utf8 = function (s) { return decodeURIComponent(escape(s))
 
 // Convert a string into a blob
 module.exports.data2blob = function (data) {
-    var bytes = new Array(data.length);
-    for (var i = 0; i < data.length; i++) bytes[i] = data.charCodeAt(i);
-    var blob = new Blob([new Uint8Array(bytes)]);
+    const bytes = new Array(data.length);
+    for (let i = 0; i < data.length; i++) bytes[i] = data.charCodeAt(i);
+    const blob = new Blob([new Uint8Array(bytes)]);
     return blob;
 };
 
@@ -225,7 +225,7 @@ module.exports.checkPasswordRequirements = function(password, requirements) {
 
 
 // Limits the number of tasks running to a fixed limit placing the rest in a pending queue.
-// This is useful to limit the number of agents upgrading at the same time, to not swamp 
+// This is useful to limit the number of agents upgrading at the same time, to not swamp
 // the network with traffic.
 module.exports.createTaskLimiterQueue = function (maxTasks, maxTaskTime, cleaningInterval) {
     var obj = { maxTasks: maxTasks, maxTaskTime: (maxTaskTime * 1000), nextTaskId: 0, currentCount: 0, current: {}, pending: [[], [], []], timer: null };

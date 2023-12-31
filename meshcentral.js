@@ -14,7 +14,8 @@
 /*jshint esversion: 6 */
 "use strict";
 
-const common = require('./common.js');
+// const common = require('./common.js');
+import * as common from "./common.js";
 
 // If app metrics is available
 if (process.argv[2] == '--launch') { try { require('appmetrics-dash').monitor({ url: '/', title: 'MeshCentral', port: 88, host: '127.0.0.1' }); } catch (ex) { } }
@@ -616,7 +617,7 @@ function CreateMeshCentralServer(config, args) {
     obj.performServerUpdate = function (version) {
         if (obj.serverSelfWriteAllowed != true) return false;
         if ((version == null) || (version == '') || (typeof version != 'string')) { console.log('Starting self upgrade...'); } else { console.log('Starting self upgrade to: ' + version); }
-        process.exit(200); 
+        process.exit(200);
         return true;
     };
 
@@ -903,7 +904,7 @@ function CreateMeshCentralServer(config, args) {
                                 process.exit(0);
                             } else {
                                 // Load all users
-                                const allusers = {}, removeCount = 0;
+                                let allusers = {}, removeCount = 0;
                                 obj.db.GetAllType('user', function (err, docs) {
                                     obj.common.unEscapeAllLinksFieldName(docs);
                                     for (i in docs) { allusers[docs[i]._id] = docs[i]; }
@@ -1092,7 +1093,7 @@ function CreateMeshCentralServer(config, args) {
                             for (var j in doc) { if (j.indexOf('.') >= 0) { console.log("Invalid field name (" + j + ") in document: " + json[i]); return; } }
                             //if ((json[i].type == 'ifinfo') && (json[i].netif2 != null)) { for (var j in json[i].netif2) { var esc = obj.common.escapeFieldName(j); if (esc !== j) { json[i].netif2[esc] = json[i].netif2[j]; delete json[i].netif2[j]; } } }
                             //if ((json[i].type == 'mesh') && (json[i].links != null)) { for (var j in json[i].links) { var esc = obj.common.escapeFieldName(j); if (esc !== j) { json[i].links[esc] = json[i].links[j]; delete json[i].links[j]; } } }
-                        } 
+                        }
                         //for (i in json) { if ((json[i].type == "node") && (json[i].host != null)) { json[i].rname = json[i].host; delete json[i].host; } } // DEBUG: Change host to rname
                         setTimeout(function () { // If the Mongo database is being created for the first time, there is a race condition here. This will get around it.
                             obj.db.RemoveAll(function () {
@@ -1130,13 +1131,13 @@ function CreateMeshCentralServer(config, args) {
 
                         // Get all users from current database
                         obj.db.GetAllType('user', function (err, docs) {
-                            const users = {}, usersCount = 0;
+                            let users = {}, usersCount = 0;
                             for (var i in docs) { users[docs[i]._id] = docs[i]; usersCount++; }
 
                             // Fetch all meshes from the database
                             obj.db.GetAllType('mesh', function (err, docs) {
                                 obj.common.unEscapeAllLinksFieldName(docs);
-                                const meshes = {}, meshesCount = 0;
+                                let meshes = {}, meshesCount = 0;
                                 for (var i in docs) { meshes[docs[i]._id] = docs[i]; meshesCount++; }
                                 console.log('Loaded ' + usersCount + ' users and ' + meshesCount + ' meshes.');
                                 // Look at each object in the import file
@@ -2137,7 +2138,7 @@ function CreateMeshCentralServer(config, args) {
         // Update the server state
         obj.updateServerState('state', "stopped");
     };
-    
+
     // Event Dispatch
     obj.AddEventDispatch = function (ids, target) {
         obj.debug('dispatch', 'AddEventDispatch', ids);
@@ -2940,7 +2941,7 @@ function CreateMeshCentralServer(config, args) {
             } catch (ex) { }
         }
     };
-    
+
     // List of possible mesh agents
     obj.meshAgentsArchitectureNumbers = {
         0: { id: 0, localname: 'Unknown', rname: 'meshconsole.exe', desc: 'Unknown agent', update: false, amt: true, platform: 'unknown', core: 'linux-noamt', rcore: 'linux-recovery', arcore: 'linux-agentrecovery', tcore: 'linux-tiny' },
@@ -3281,7 +3282,7 @@ function CreateMeshCentralServer(config, args) {
         if (domain.id == '') { objx = obj; } else { suffix = '-' + domain.id; objx.meshAgentBinaries = {}; }
 
         // Load agent information file. This includes the data & time of the agent.
-        const agentInfo = [];
+        let agentInfo = [];
         try { agentInfo = JSON.parse(obj.fs.readFileSync(obj.path.join(__dirname, 'agents', 'hashagents.json'), 'utf8')); } catch (ex) { }
 
         var archcount = 0;

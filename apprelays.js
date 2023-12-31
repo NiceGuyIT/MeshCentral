@@ -100,7 +100,7 @@ module.exports.CreateWebRelaySession = function (parent, db, req, args, domain, 
         parent.parent.debug('webrelay', 'timeout set to ' + Math.floor(timeout / 1000) + ' second(s).');
         obj.expireTimer = setTimeout(function () { parent.parent.debug('webrelay', 'timeout'); close(); }, timeout);
     }
-    
+
     // Events
     obj.closed = false;
     obj.onclose = null;
@@ -157,7 +157,7 @@ module.exports.CreateWebRelaySession = function (parent, db, req, args, domain, 
                 return;
             }
         }
-        
+
         if (count > 0) return;
         launchNewTunnel();
     }
@@ -303,7 +303,7 @@ module.exports.CreateWebRelay = function (parent, db, args, domain, mtype) {
             // Stream the HTTP request and body, this is a chunked encoded HTTP request
             // TODO: Flow control (Not sure how to do this in ExpressJS)
             send(Buffer.from(request));
-            req.on('data', function (data) { send(Buffer.concat([Buffer.from(data.length.toString(16) + '\r\n', 'binary'), data, send(Buffer.from('\r\n', 'binary'))])); }); 
+            req.on('data', function (data) { send(Buffer.concat([Buffer.from(data.length.toString(16) + '\r\n', 'binary'), data, send(Buffer.from('\r\n', 'binary'))])); });
             req.on('end', function () { send(Buffer.from('0\r\n\r\n', 'binary')); });
         } else {
             // Request has no body, send it now
@@ -458,7 +458,7 @@ module.exports.CreateWebRelay = function (parent, db, args, domain, mtype) {
             const protocol = (args.tlsoffload) ? 'ws' : 'wss';
             var domainadd = '';
             if ((domain.dns == null) && (domain.id != '')) { domainadd = domain.id + '/' }
-            const url = protocol + '://localhost:' + args.port + '/' + domainadd + (((obj.mtype == 3) && (obj.relaynodeid == null)) ? 'local' : 'mesh') + 'relay.ashx?p=14&auth=' + cookie; // Protocol 14 is Web-TCP
+            let url = protocol + '://localhost:' + args.port + '/' + domainadd + (((obj.mtype == 3) && (obj.relaynodeid == null)) ? 'local' : 'mesh') + 'relay.ashx?p=14&auth=' + cookie; // Protocol 14 is Web-TCP
             if (domain.id != '') { url += '&domainid=' + domain.id; } // Since we are using "localhost", we are going to signal what domain we are on using a URL argument.
             parent.parent.parent.debug('relay', 'TCP: Connection websocket to ' + url);
             obj.wsClient = new WebSocket(url, options);
@@ -692,7 +692,7 @@ module.exports.CreateWebRelay = function (parent, db, args, domain, mtype) {
             if (header != null) {
                 const statusCode = parseInt(header.Directive[1]);
                 if ((!isNaN(statusCode)) && (statusCode > 0) && (statusCode <= 999)) { obj.res.status(statusCode); } // Set the status
-                const blockHeaders = ['Directive', 'sec-websocket-extensions', 'connection', 'transfer-encoding', 'last-modified', 'content-security-policy', 'cache-control']; // We do not forward these headers 
+                const blockHeaders = ['Directive', 'sec-websocket-extensions', 'connection', 'transfer-encoding', 'last-modified', 'content-security-policy', 'cache-control']; // We do not forward these headers
                 for (var i in header) {
                     if (i == 'set-cookie') {
                         for (var ii in header[i]) {
@@ -1097,7 +1097,7 @@ module.exports.CreateMstscRelay = function (parent, db, ws, req, args, domain) {
 module.exports.CreateSshRelay = function (parent, db, ws, req, args, domain) {
     const Net = require('net');
     const WebSocket = require('ws');
-    
+
     // SerialTunnel object is used to embed SSH within another connection.
     function SerialTunnel(options) {
         const obj = new require('stream').Duplex(options);
@@ -1210,7 +1210,7 @@ module.exports.CreateSshRelay = function (parent, db, ws, req, args, domain) {
             const protocol = (args.tlsoffload) ? 'ws' : 'wss';
             var domainadd = '';
             if ((domain.dns == null) && (domain.id != '')) { domainadd = domain.id + '/' }
-            const url = protocol + '://localhost:' + args.port + '/' + domainadd + (((obj.mtype == 3) && (obj.relaynodeid == null)) ? 'local' : 'mesh') + 'relay.ashx?p=11&auth=' + obj.xcookie; // Protocol 11 is Web-SSH
+            let url = protocol + '://localhost:' + args.port + '/' + domainadd + (((obj.mtype == 3) && (obj.relaynodeid == null)) ? 'local' : 'mesh') + 'relay.ashx?p=11&auth=' + obj.xcookie; // Protocol 11 is Web-SSH
             if (domain.id != '') { url += '&domainid=' + domain.id; } // Since we are using "localhost", we are going to signal what domain we are on using a URL argument.
             parent.parent.debug('relay', 'SSH: Connection websocket to ' + url);
             obj.wsClient = new WebSocket(url, options);
@@ -1549,7 +1549,7 @@ module.exports.CreateSshTerminalRelay = function (parent, db, ws, req, domain, u
             const protocol = (args.tlsoffload) ? 'ws' : 'wss';
             var domainadd = '';
             if ((domain.dns == null) && (domain.id != '')) { domainadd = domain.id + '/' }
-            const url = protocol + '://localhost:' + args.port + '/' + domainadd + (((obj.mtype == 3) && (obj.relaynodeid == null)) ? 'local' : 'mesh') + 'relay.ashx?p=11&auth=' + authCookie // Protocol 11 is Web-SSH
+            let url = protocol + '://localhost:' + args.port + '/' + domainadd + (((obj.mtype == 3) && (obj.relaynodeid == null)) ? 'local' : 'mesh') + 'relay.ashx?p=11&auth=' + authCookie // Protocol 11 is Web-SSH
             if (domain.id != '') { url += '&domainid=' + domain.id; } // Since we are using "localhost", we are going to signal what domain we are on using a URL argument.
             parent.parent.debug('relay', 'SSH: Connection websocket to ' + url);
             obj.wsClient = new WebSocket(url, options);
@@ -1903,7 +1903,7 @@ module.exports.CreateSshFilesRelay = function (parent, db, ws, req, domain, user
             const protocol = (args.tlsoffload) ? 'ws' : 'wss';
             var domainadd = '';
             if ((domain.dns == null) && (domain.id != '')) { domainadd = domain.id + '/' }
-            const url = protocol + '://localhost:' + args.port + '/' + domainadd + (((obj.mtype == 3) && (obj.relaynodeid == null)) ? 'local' : 'mesh') + 'relay.ashx?p=13&auth=' + authCookie // Protocol 13 is Web-SSH-Files
+            let url = protocol + '://localhost:' + args.port + '/' + domainadd + (((obj.mtype == 3) && (obj.relaynodeid == null)) ? 'local' : 'mesh') + 'relay.ashx?p=13&auth=' + authCookie // Protocol 13 is Web-SSH-Files
             if (domain.id != '') { url += '&domainid=' + domain.id; } // Since we are using "localhost", we are going to signal what domain we are on using a URL argument.
             parent.parent.debug('relay', 'SSH: Connection websocket to ' + url);
             obj.wsClient = new WebSocket(url, options);
